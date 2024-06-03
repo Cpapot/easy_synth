@@ -23,13 +23,16 @@ public:
     void    prepareToPlay(double sampleRate, int samplesPerBlock, int outputsChannelsCount);
     void 	renderNextBlock(juce::AudioBuffer< float >& outputBuffer, int startSample, int numSamples) override;
 
+    void    updateADSR(const float attack, const float decay, const float sustain, const float release);
+
 private:
     juce::ADSR adsr;
-    juce::ADSR::Parameters adsrParams;
+    juce::ADSR::Parameters      adsrParams;
+    juce::AudioBuffer<float>    synthBuffer;
 
     //juce::dsp::Oscillator<float> osc{ [](float x) {return std::sin(x);  } };                      //sin Wave
-    juce::dsp::Oscillator<float> osc{ [](float x) {return x / juce::MathConstants<float>::pi;  } }; //Saw Wave
-    //juce::dsp::Oscillator<float> osc{ [](float x) {return x < 0.0f ? -1.0f : 1.0f;  } };          //sqare wave
+    //juce::dsp::Oscillator<float> osc{ [](float x) {return x / juce::MathConstants<float>::pi;  } }; //Saw Wave
+    juce::dsp::Oscillator<float> osc{ [](float x) {return x < 0.0f ? -1.0f : 1.0f;  } };          //sqare wave
     juce::dsp::Gain<float> gain;
 
 

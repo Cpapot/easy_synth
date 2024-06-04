@@ -22,8 +22,10 @@ Easy_synthAudioProcessor::Easy_synthAudioProcessor()
                        ), apvts(*this, nullptr, "Parameters", createParams())
 #endif
 {
+    for (int i = 0; i < 5; i++)
+        synth.addVoice(new SynthVoice());
+
     synth.addSound(new SynthSound());
-    synth.addVoice(new SynthVoice());
 }
 
 Easy_synthAudioProcessor::~Easy_synthAudioProcessor()

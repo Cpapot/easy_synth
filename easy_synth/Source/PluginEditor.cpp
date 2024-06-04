@@ -28,8 +28,22 @@ Easy_synthAudioProcessorEditor::Easy_synthAudioProcessorEditor (Easy_synthAudioP
 	setSliderParam(decaySlider);
     setSliderParam(sustainSlider);
 	setSliderParam(releaseSlider);
+    oscComboBox.addItem("Sine Wave", 1);
+    oscComboBox.addItem("Square Wave", 1);
+    oscComboBox.addItem("Saw Wave", 1);
+    //oscComboBox.onChange = [this] { updateWave(); };
+    oscComboBox.setSelectedId(1);
+    addAndMakeVisible(oscComboBox);
 
 }
+
+/*void Easy_synthAudioProcessorEditor::updateWave()
+{
+
+    oscComboBox.getSelectedId();
+
+
+}*/
 
 void Easy_synthAudioProcessorEditor::setSliderParam(juce::Slider& slider)
 {
@@ -43,10 +57,11 @@ void Easy_synthAudioProcessorEditor::resized()
     const auto bounds = getLocalBounds().reduced(10);
     const auto padding = 10;
     const auto sliderWidth = bounds.getWidth() / 4 - padding;
-    const auto sliderHeight = bounds.getHeight();
+    const auto sliderHeight = bounds.getHeight() - 50;
     const auto sliderStartX = 0;
-    const auto sliderStartY = 0;
+    const auto sliderStartY = 50;
 
+    oscComboBox.setBounds(0 + padding, 0, bounds.getWidth(), 45);
     attackSlider.setBounds(sliderStartX, sliderStartY, sliderWidth, sliderHeight);
     decaySlider.setBounds(attackSlider.getRight() + padding, sliderStartY, sliderWidth, sliderHeight);
     sustainSlider.setBounds(decaySlider.getRight() + padding, sliderStartY, sliderWidth, sliderHeight);

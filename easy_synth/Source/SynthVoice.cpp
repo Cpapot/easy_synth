@@ -20,7 +20,7 @@ bool 	SynthVoice::canPlaySound(juce::SynthesiserSound* sound)
 
 void 	SynthVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound* sound, int currentPitchWheelPosition)
 {
-    osc.setFrequency(juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber));
+    osc->setFrequency(juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber));
     adsr.noteOn();
 }
 
@@ -46,20 +46,46 @@ void    SynthVoice::prepareToPlay(double sampleRate, int samplesPerBlock, int ou
 {
     adsr.setSampleRate(sampleRate);
 
-    juce::dsp::ProcessSpec spec;
     spec.maximumBlockSize = samplesPerBlock;
     spec.numChannels = outputsChannelsCount;
     spec.sampleRate = sampleRate;
-
-    osc.prepare(spec);
+    sinWaveOsc.prepare(spec);
+    SquareWaveOsc.prepare(spec);
+    SawWaveOsc.prepare(spec);
+    updateOSC(3);
 
     gain.prepare(spec);
-
-    osc.setFrequency(220.0f);
 
     gain.setGainLinear(0.1f);
 
     isPreparedtoPlay = true;
+}
+
+void SynthVoice::updateOSC(const int mode)
+{
+    if (oscMode == mode)
+        return;
+    oscMode = mode;
+
+    if (adsr.isActive() == false)
+    	clearCurrentNote();
+    else
+    {
+        adsr.noteOff();
+        clearCurrentNote();
+    }
+    switch (mode)
+    {
+    case 1: //sin wave
+        osc = &sinWaveOsc;
+    	break;
+    case 2: //square wave
+        osc = &SquareWaveOsc;
+        break;
+    case 3: //saw wave
+        osc = &SawWaveOsc;
+        break;
+    }
 }
 
 void SynthVoice::updateADSR(const float attack, const float decay, const float sustain, const float release)
@@ -84,7 +110,7 @@ void 	SynthVoice::renderNextBlock(juce::AudioBuffer< float >& outputBuffer, int 
     synthBuffer.clear();
 
     juce::dsp::AudioBlock<float> block{ synthBuffer };
-    osc.process(juce::dsp::ProcessContextReplacing<float>(block));
+    osc->process(juce::dsp::ProcessContextReplacing<float>(block));
     gain.process(juce::dsp::ProcessContextReplacing<float>(block));
 
     adsr.applyEnvelopeToBuffer(synthBuffer, 0, numSamples);

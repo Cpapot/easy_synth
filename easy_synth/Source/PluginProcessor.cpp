@@ -157,8 +157,9 @@ void Easy_synthAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
             auto& decay = *apvts.getRawParameterValue("DECAY");
             auto& substain = *apvts.getRawParameterValue("SUSTAIN");
             auto& release = *apvts.getRawParameterValue("RELEASE");
-
+            auto& osc = *apvts.getParameter("OSC");
             voice->updateADSR(attack.load(), decay.load(), substain.load(), release.load());
+            voice->updateOSC(osc.getNumSteps());
         }
     }
 
